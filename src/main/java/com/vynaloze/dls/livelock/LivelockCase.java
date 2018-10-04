@@ -1,32 +1,23 @@
 package com.vynaloze.dls.livelock;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class LivelockCase {
-    private static final long DURATION = 300000;
+    private static final long DURATION = 10000;
 
     public static void start() {
-        Street street = new Street();
-        List<Pedestrian> pedestrians = Arrays.asList(
-                new Pedestrian("1", street, 0, 0, 1),
-                new Pedestrian("2", street, 0, 5, -1)
-        );
+        Door door = new Door();
+        Gentleman Bob = new Gentleman("Bob");
+        Gentleman Dave = new Gentleman("Dave");
 
-        for (Pedestrian pedestrian : pedestrians) {
-            new Thread(pedestrian).start();
-        }
+        door.setFirst(Bob);
+        door.addToWaiting(Dave);
+
+        new Thread(() -> Bob.goThroughDoor(door)).start();
+
+        new Thread(() -> Dave.goThroughDoor(door)).start();
 
         long start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < DURATION) {
-            for (Pedestrian pedestrian : pedestrians) {
-                System.out.println(pedestrian);
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //nothing
         }
         System.exit(0);
     }
