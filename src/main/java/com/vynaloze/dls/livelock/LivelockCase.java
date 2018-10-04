@@ -4,16 +4,15 @@ public class LivelockCase {
     private static final long DURATION = 10000;
 
     public static void start() {
-        Door door = new Door();
-        Gentleman Bob = new Gentleman("Bob");
-        Gentleman Dave = new Gentleman("Dave");
+        Queue queue = new Queue();
+        LivelockWorker greg = new LivelockWorker("Gentle Greg", queue);
+        LivelockWorker hugo = new LivelockWorker("Humble Hugo", queue);
 
-        door.setFirst(Bob);
-        door.addToWaiting(Dave);
+        queue.setFirst(greg);
+        queue.addToWaiting(hugo);
 
-        new Thread(() -> Bob.goThroughDoor(door)).start();
-
-        new Thread(() -> Dave.goThroughDoor(door)).start();
+        new Thread(greg).start();
+        new Thread(hugo).start();
 
         long start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < DURATION) {
