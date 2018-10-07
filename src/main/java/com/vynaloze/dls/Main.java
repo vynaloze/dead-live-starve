@@ -1,5 +1,6 @@
 package com.vynaloze.dls;
 
+import com.vynaloze.dls.deadlock.DeadlockCase;
 import com.vynaloze.dls.livelock.LivelockCase;
 import com.vynaloze.dls.starvation.StarvationCase;
 
@@ -9,18 +10,23 @@ public class Main {
             System.out.println("Wrong number of command line arguments.");
             System.exit(1);
         }
-        if (args[0].equals("--deadlock")) {
-            System.out.println("Deadlock.");
-        } else if (args[0].equals("--livelock")) {
-            System.out.println("Livelock.");
-            LivelockCase.start();
-        } else if (args[0].equals("--starvation")) {
-            System.out.println("Starvation.");
-            StarvationCase.start();
-        } else {
-            System.out.println("Unrecognised command line argument.");
-            System.out.println("Possible options: --livelock --livelock --starvation");
-            System.exit(1);
+        switch (args[0]) {
+            case "--deadlock":
+                System.out.println("Deadlock.");
+                DeadlockCase.start();
+                break;
+            case "--livelock":
+                System.out.println("Livelock.");
+                LivelockCase.start();
+                break;
+            case "--starvation":
+                System.out.println("Starvation.");
+                StarvationCase.start();
+                break;
+            default:
+                System.out.println("Unrecognised command line argument.");
+                System.out.println("Possible options: --livelock --livelock --starvation");
+                System.exit(1);
         }
     }
 }
