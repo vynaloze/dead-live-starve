@@ -1,12 +1,15 @@
 package com.vynaloze.dls.starvation;
 
 class SharedResource {
-    private static final long DURATION = 100;
-
-    synchronized int whatIsTheMeaningOfLife() {
+    synchronized int getResource(long duration, String id) {
         long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < DURATION) {
-            //nothing
+        while (System.currentTimeMillis() - start < duration) {
+            System.out.println("Serving data for " + id);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return 42;
     }

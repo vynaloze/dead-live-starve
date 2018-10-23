@@ -2,28 +2,19 @@ package com.vynaloze.dls.starvation;
 
 public class StarvationWorker implements Runnable {
     private final SharedResource sharedResource;
-    private final int id;
-    private int invocations;
+    private final String id;
+    private final long duration;
 
-    public StarvationWorker(final SharedResource sharedResource, int id) {
+    public StarvationWorker(final SharedResource sharedResource, final String id, final long duration) {
         this.sharedResource = sharedResource;
         this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getInvocations() {
-        return invocations;
+        this.duration = duration;
     }
 
     @Override
     public void run() {
-        invocations = 0;
-        while (true) {
-            sharedResource.whatIsTheMeaningOfLife();
-            invocations++;
-        }
+        System.out.println("Me, " + id + ", asked for The Resource");
+        sharedResource.getResource(duration, id);
+        System.out.println("Me, " + id + ", finished with The Resource");
     }
 }

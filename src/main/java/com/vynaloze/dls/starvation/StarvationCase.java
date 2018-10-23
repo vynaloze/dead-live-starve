@@ -1,29 +1,29 @@
 package com.vynaloze.dls.starvation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class StarvationCase {
     private static final long DURATION = 30000;
 
     public static void start() {
         final SharedResource sharedResource = new SharedResource();
-        List<StarvationWorker> workers = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            StarvationWorker worker = new StarvationWorker(sharedResource, i);
-            workers.add(worker);
-            new Thread(worker).start();
+        StarvationWorker workerGUI = new StarvationWorker(sharedResource, "Light GUI form", 100);
+        StarvationWorker workerDownload = new StarvationWorker(sharedResource, "Heavy Download", 20000);
+        Thread threadDownload = new Thread(workerDownload);
+        threadDownload.setPriority(Thread.MIN_PRIORITY);
+        threadDownload.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        Thread threadGUI = new Thread(workerGUI);
+        threadGUI.setPriority(Thread.MAX_PRIORITY);
+        threadGUI.start();
 
         long start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < DURATION) {
-            System.out.print('\r');
-            for(StarvationWorker worker : workers){
-                System.out.print(String.format("%s->%2s    ", worker.getId(), worker.getInvocations()));
-            }
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
