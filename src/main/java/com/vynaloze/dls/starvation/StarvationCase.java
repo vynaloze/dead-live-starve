@@ -7,7 +7,7 @@ public class StarvationCase {
         final SharedResource sharedResource = new SharedResource();
 
         StarvationWorker workerGUI = new StarvationWorker(sharedResource, "Light GUI form", 100);
-        StarvationWorker workerDownload = new StarvationWorker(sharedResource, "Heavy Download", 20000);
+        StarvationWorker workerDownload = new StarvationWorker(sharedResource, "Heavy Download", 5000);
         Thread threadDownload = new Thread(workerDownload);
         threadDownload.setPriority(Thread.MIN_PRIORITY);
         threadDownload.start();
@@ -20,15 +20,14 @@ public class StarvationCase {
         threadGUI.setPriority(Thread.MAX_PRIORITY);
         threadGUI.start();
 
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < DURATION) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        while (threadDownload.getState() != Thread.State.TERMINATED
+                && threadGUI.getState() != Thread.State.TERMINATED) {
+            if (threadGUI.getState() == Thread.State.BLOCKED
+                    && threadDownload.getState() == Thread.State.RUNNABLE) {
+                threadDownload.interrupt();
+                threadDownload = new Thread(workerDownload);
+                threadDownload.start();
             }
         }
-        System.exit(0);
-
     }
 }

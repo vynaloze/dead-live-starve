@@ -12,10 +12,27 @@ public class DeadlockCase {
         thread1.start();
         thread2.start();
 
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < DURATION) {
-            //nothing
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        System.exit(0);
+
+        while (thread1.getState() != Thread.State.TERMINATED
+                && thread2.getState() != Thread.State.TERMINATED) {
+            System.out.println("Thread1 state: " + thread1.getState());
+            System.out.println("Thread2 state: " + thread2.getState());
+            if (thread1.getState() == Thread.State.BLOCKED
+                    && thread2.getState() == Thread.State.BLOCKED) {
+                System.out.println("Deadlock detected!");
+                System.out.println("Exiting...");
+                System.exit(1);
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
